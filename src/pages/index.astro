@@ -1,121 +1,673 @@
 ---
-import Layout from '../layouts/Layout.astro'
-import { client } from '../client.config.js'
+import Layout from "../layouts/Layout.astro";
+import { client } from "../client.config.js";
 
-let services = []
-let testimonials = []
+let services = [];
+let testimonials = [];
 try {
   const [s, t] = await Promise.all([
-    fetch(`${client.cmsUrl}/api/services?where[tenant.slug][equals]=${client.tenantSlug}&limit=6`),
-    fetch(`${client.cmsUrl}/api/testimonials?where[tenant.slug][equals]=${client.tenantSlug}&limit=3`)
-  ])
-  services = (await s.json()).docs || []
-  testimonials = (await t.json()).docs || []
+    fetch(
+      `${client.cmsUrl}/api/services?where[tenant.slug][equals]=${client.tenantSlug}&limit=6`,
+    ),
+    fetch(
+      `${client.cmsUrl}/api/testimonials?where[tenant.slug][equals]=${client.tenantSlug}&limit=3`,
+    ),
+  ]);
+  services = (await s.json()).docs || [];
+  testimonials = (await t.json()).docs || [];
 } catch {}
 
 const displayServices = services.length
   ? services
-  : client.services.map((s: string) => ({ title: s, description: `Professional ${s.toLowerCase()} services in ${client.city}.` }))
+  : client.services.map((s: string) => ({
+      title: s,
+      description: `Professional ${s.toLowerCase()} services in ${client.city}.`,
+    }));
 
-const primary = client.primaryColor || '#2d5a3d'
+const primary = client.primaryColor || "#4a1a6b";
 ---
 
 <Layout title="Home" description={client.tagline}>
+  <!-- Hero Section (Reference Style) -->
+  <section style="padding: 1rem 0; background: #fff;">
+    <div style="max-width: 1600px; margin: 0 auto; padding: 0 1.5rem;">
+      <div
+        id="hero-card"
+        style={`
+        position: relative;
+        height: 750px;
+        border-radius: 40px;
+        overflow: hidden;
+        background: #000;
+        display: flex;
+        align-items: center;
+        padding: 0 5rem;
+        box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+      `}
+      >
+        <!-- Background Image with Scroll Zoom -->
+        <div
+          id="hero-bg"
+          style={`
+          position: absolute;
+          inset: 0;
+          background-image: url('/images/luxury_patio_garden_hero.png');
+          background-size: cover;
+          background-position: center;
+          transition: transform 0.1s ease-out;
+          will-change: transform;
+        `}
+        >
+        </div>
 
-  <section style={`padding:5rem 1.5rem;background:linear-gradient(135deg,${primary}18 0%,#fff 65%)`}>
-    <div style="max-width:1200px;margin:0 auto">
-      <span style={`background:${primary}22;color:${primary};padding:0.3rem 0.9rem;border-radius:20px;font-size:0.85rem;font-weight:500`}>
-        Serving {client.city}, {client.state}
-      </span>
-      <h1 style="font-size:clamp(2rem,5vw,3.5rem);font-weight:800;margin:1rem 0;line-height:1.15;color:#111">
-        {client.tagline || `Professional ${client.industry} Services`}
-      </h1>
-      <p style="font-size:1.1rem;color:#4b5563;max-width:540px;margin-bottom:2rem;line-height:1.7">
-        Trusted by homeowners in {client.serviceArea?.slice(0,2).join(' & ')}. Licensed, insured, and ready to help.
-      </p>
-      <div style="display:flex;gap:1rem;flex-wrap:wrap">
-        <a href="/contact" style={`background:${primary};color:#fff;padding:0.85rem 2rem;border-radius:10px;font-weight:700;font-size:1.05rem`}>Get Free Quote</a>
-        <a href={`tel:${client.phone}`} style={`border:2px solid ${primary};color:${primary};padding:0.85rem 2rem;border-radius:10px;font-weight:700;font-size:1.05rem`}>{client.phone || 'Call Us'}</a>
-      </div>
-    </div>
-  </section>
+        <!-- Overlay -->
+        <div
+          style="position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0) 100%);"
+        >
+        </div>
 
-  <section style="padding:1.25rem 1.5rem;border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb;background:#f9fafb">
-    <div style="max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:center;gap:2rem;font-size:0.875rem;color:#374151;font-weight:500">
-      {['✓ Licensed & Insured', '✓ Free Estimates', '✓ Same Day Service', '✓ 5-Star Rated', '✓ Satisfaction Guaranteed'].map(b => <span>{b}</span>)}
-    </div>
-  </section>
+        <!-- Content -->
+        <div style="position: relative; z-index: 10; max-width: 750px;">
+          <h1
+            class="reveal"
+            style="font-size: clamp(3.5rem, 7vw, 5.5rem); font-weight: 800; color: #fff; line-height: 1.1; margin-bottom: 2.5rem;"
+          >
+            We Bring Your <br />
+            Garden <span
+              style={`
+              color: #fff; 
+              display: inline-block;
+              position: relative;
+              z-index: 1;
+            `}
+            >
+              to Life
+              <div
+                class="brush-animate"
+                style={`
+                position: absolute;
+                bottom: 12px;
+                left: -5%;
+                width: 0;
+                height: 15px;
+                background: ${primary};
+                opacity: 0;
+                z-index: -1;
+                border-radius: 4px;
+                transform: rotate(-1.5deg);
+                will-change: width, opacity;
+              `}
+              >
+              </div>
+            </span>
+          </h1>
 
-  <section style="padding:4rem 1.5rem">
-    <div style="max-width:1200px;margin:0 auto">
-      <div style="text-align:center;margin-bottom:2.5rem">
-        <h2 style="font-size:2rem;font-weight:700;margin-bottom:0.75rem">Our Services</h2>
-        <p style="color:#6b7280;max-width:500px;margin:0 auto">Comprehensive {client.industry} services for homeowners and businesses in {client.city}.</p>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.25rem">
-        {displayServices.map((service: any) => (
-          <div style="padding:1.5rem;border-radius:12px;border:1px solid #e5e7eb">
-            <div style={`width:44px;height:44px;border-radius:10px;background:${primary}22;display:flex;align-items:center;justify-content:center;margin-bottom:1rem`}>
-              <svg width="22" height="22" fill="none" stroke={primary} viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            </div>
-            <h3 style="font-weight:700;font-size:1rem;margin-bottom:0.5rem">{service.title}</h3>
-            <p style="color:#6b7280;font-size:0.875rem;line-height:1.6">{service.description}</p>
+          <div style="display: flex; gap: 1.5rem;">
+            <a
+              href="/gallery"
+              class="reveal delay-3"
+              style={`
+              background: rgba(255,255,255,0.15); 
+              backdrop-filter: blur(12px);
+              color: #fff; 
+              padding: 1.25rem 3rem; 
+              border-radius: 18px; 
+              font-weight: 700; 
+              text-decoration: none; 
+              font-size: 1.15rem;
+              border: 1px solid rgba(255,255,255,0.25);
+              transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            `}
+            >
+              Explore Projects
+            </a>
+            <a
+              href="/contact"
+              class="reveal delay-3"
+              style={`
+              background: ${primary}; 
+              color: #fff; 
+              padding: 1.25rem 3rem; 
+              border-radius: 18px; 
+              font-weight: 700; 
+              text-decoration: none; 
+              font-size: 1.15rem;
+              box-shadow: 0 10px 25px ${primary}50;
+              transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            `}
+            >
+              Request a Quote
+            </a>
           </div>
-        ))}
-      </div>
-      <div style="text-align:center;margin-top:2rem">
-        <a href="/services" style={`border:2px solid ${primary};color:${primary};padding:0.75rem 2rem;border-radius:10px;font-weight:600`}>View All Services →</a>
-      </div>
-    </div>
-  </section>
+        </div>
 
-  <section style={`padding:4rem 1.5rem;background:${primary}12`}>
-    <div style="max-width:1200px;margin:0 auto">
-      <h2 style="font-size:2rem;font-weight:700;text-align:center;margin-bottom:2.5rem">Why Choose {client.name}?</h2>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.25rem">
-        {[
-          { icon: '🏆', title: 'Years of Experience', desc: 'Trusted by hundreds of local homeowners.' },
-          { icon: '⚡', title: 'Fast Response', desc: 'Same-day service. We show up when we say.' },
-          { icon: '💯', title: 'Quality Guaranteed', desc: 'Satisfaction guarantee on every job.' },
-          { icon: '💰', title: 'Fair Pricing', desc: 'Transparent quotes. No hidden fees.' },
-        ].map(item => (
-          <div style="text-align:center;padding:1.75rem 1.25rem;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.05)">
-            <div style="font-size:2.5rem;margin-bottom:0.75rem">{item.icon}</div>
-            <h3 style="font-weight:700;margin-bottom:0.5rem">{item.title}</h3>
-            <p style="color:#6b7280;font-size:0.875rem;line-height:1.6">{item.desc}</p>
+        <!-- Rating Badge -->
+        <div
+          class="reveal-right delay-4 animate-float"
+          style={`
+          position: absolute;
+          bottom: 50px;
+          right: 50px;
+          background: rgba(255,255,255,0.95);
+          backdrop-filter: blur(15px);
+          padding: 1.25rem 1.75rem;
+          border-radius: 24px;
+          display: flex;
+          align-items: center;
+          gap: 1.25rem;
+          box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+          z-index: 20;
+        `}
+        >
+          <div
+            style={`
+            width: 55px; height: 55px; 
+            background: ${primary}; 
+            border-radius: 14px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: #fff;
+            font-weight: 800;
+            font-size: 1.1rem;
+          `}
+          >
+            4.8
           </div>
-        ))}
-      </div>
-    </div>
-  </section>
-
-  {testimonials.length > 0 && (
-    <section style="padding:4rem 1.5rem">
-      <div style="max-width:1200px;margin:0 auto">
-        <h2 style="font-size:2rem;font-weight:700;text-align:center;margin-bottom:2.5rem">What Our Clients Say</h2>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem">
-          {testimonials.map((t: any) => (
-            <div style="padding:1.5rem;background:#f9fafb;border-radius:12px;border:1px solid #e5e7eb">
-              <div style="color:#facc15;margin-bottom:0.75rem">★★★★★</div>
-              <p style="color:#374151;font-style:italic;margin-bottom:1rem;line-height:1.7">"{t.text || t.content}"</p>
-              <p style="font-weight:700">{t.name || t.author}</p>
-              {t.location && <p style="font-size:0.8rem;color:#6b7280">{t.location}</p>}
+          <div>
+            <div style="font-weight: 800; color: #111; font-size: 0.95rem;">
+              Customer Rating
             </div>
-          ))}
+            <div style={`color: ${primary}; display: flex; gap: 3px;`}>
+              {
+                [1, 2, 3, 4, 5].map(() => (
+                  <svg
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                ))
+              }
+            </div>
+          </div>
         </div>
       </div>
-    </section>
-  )}
+    </div>
+  </section>
 
-  <section style={`padding:4rem 1.5rem;background:${primary};color:#fff;text-align:center`}>
-    <div style="max-width:700px;margin:0 auto">
-      <h2 style="font-size:2rem;font-weight:700;margin-bottom:1rem">Ready to Get Started?</h2>
-      <p style="opacity:0.9;margin-bottom:2rem;font-size:1.05rem">Contact us today for a free, no-obligation estimate.</p>
-      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
-        <a href="/contact" style="background:#fff;color:#111;padding:0.85rem 2.5rem;border-radius:10px;font-weight:700">Get Free Quote</a>
-        <a href={`tel:${client.phone}`} style="border:2px solid rgba(255,255,255,0.7);color:#fff;padding:0.85rem 2.5rem;border-radius:10px;font-weight:700">{client.phone || 'Call Us'}</a>
+  <script>
+    const heroBg = document.getElementById("hero-bg");
+    window.addEventListener("scroll", () => {
+      if (!heroBg) return;
+      const scrollPos = window.scrollY;
+      const zoomFactor = 1 + scrollPos / 2000;
+      if (scrollPos < 1000) {
+        heroBg.style.transform = `scale(${zoomFactor})`;
+      }
+    });
+  </script>
+
+  <!-- Trust Bar (Reference Style) -->
+  <section style="padding: 3rem 0; background: #fff;">
+    <div
+      class="container"
+      style="display: flex; justify-content: center; gap: 4rem; flex-wrap: wrap;"
+    >
+      {
+        [
+          {
+            text: "Trusted By 1000+ Clients",
+            icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z",
+          },
+          {
+            text: "Commitment to High Standards",
+            icon: "M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z",
+          },
+          {
+            text: "Award Winning Landscape Company",
+            icon: "M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z",
+          },
+        ].map((item, i) => (
+          <div
+            class={`reveal delay-${i + 1}`}
+            style="display: flex; align-items: center; gap: 1rem; color: #4b5563; font-weight: 700; font-size: 0.95rem;"
+          >
+            <div style={`color: ${primary}`}>
+              <svg
+                width="24"
+                height="24"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d={item.icon}
+                />
+              </svg>
+            </div>
+            {item.text}
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section class="reveal" style="padding:8rem 1.5rem">
+    <div class="container">
+      <div style="text-align:center; margin-bottom:5rem">
+        <span style={`color:${primary}; font-weight:800; font-size:0.9rem; text-transform:uppercase; letter-spacing: 0.2em; display:block; margin-bottom:1rem`}>Our Services</span>
+        <h2
+          style="font-size:clamp(2.5rem, 5vw, 3.5rem); font-weight:900; margin-bottom:1.5rem; letter-spacing: -1.5px; line-height:1.1; max-width:800px; margin-left:auto; margin-right:auto"
+        >
+          Landscaping Solutions for Homes and Businesses
+        </h2>
+      </div>
+
+      <style define:vars={{ primary }}>
+        .service-card {
+          border-radius: 160px 160px 40px 40px;
+          background: #fdfbff;
+          border: 1px solid #f0e6f7;
+          transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          height: 100%;
+          padding: 0;
+          text-align: center;
+          will-change: transform, background-color, box-shadow;
+          transform: translateZ(0);
+        }
+
+        .service-card:hover {
+          background: var(--primary) !important;
+          transform: translateY(-15px);
+          border-color: transparent;
+          box-shadow: 0 40px 80px -20px rgba(74, 26, 107, 0.45);
+        }
+
+        .card-content {
+          padding: 4rem 2rem 1rem;
+          flex: 1;
+          background: transparent;
+          position: relative;
+          z-index: 2;
+        }
+
+        .service-card h3 {
+          font-size: 1.8rem;
+          font-weight: 800;
+          margin-bottom: 1rem;
+          color: #111;
+          transition: color 0.8s ease;
+        }
+
+        .service-card:hover h3 {
+          color: #fff !important;
+        }
+
+        .service-card p {
+          color: #6b7280;
+          font-size: 1.05rem;
+          line-height: 1.6;
+          transition: color 0.8s ease;
+        }
+
+        .service-card:hover p {
+          color: rgba(255, 255, 255, 0.95) !important;
+        }
+
+        .image-container {
+          position: relative;
+          width: 100%;
+          height: 400px;
+          margin-top: -15px;
+          overflow: hidden;
+          background: transparent;
+          z-index: 1;
+        }
+
+        .leaf-mask {
+          width: 100%;
+          height: 100%;
+          mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-55 3.5 425 439' fill='none' preserveAspectRatio='none'%3E%3Cpath d='M375.42 133.4C375.564 132.868 375.521 132.304 375.299 131.8C375.077 131.296 374.689 130.883 374.2 130.63C314.47 99.1601 287.22 99.69 250.66 128.33C279.31 91.77 279.85 64.52 248.36 4.79005L248.37 4.81005C248.12 4.32033 247.71 3.93161 247.207 3.70938C246.704 3.48716 246.14 3.44501 245.61 3.59005C180.58 21.19 161.6 39.58 156 88.36C150.4 39.58 131.42 21.19 66.4 3.59005C65.8684 3.44245 65.3021 3.48331 64.7973 3.70568C64.2924 3.92805 63.88 4.31824 63.63 4.81005C32.15 64.54 32.68 91.78 61.33 128.33C24.77 99.69 -2.50001 99.1601 -62.2 130.63C-62.6892 130.883 -63.0771 131.296 -63.2991 131.8C-63.5211 132.304 -63.5637 132.868 -63.42 133.4C-45.82 198.4 -63.26 217.4 -14.5 223C-63.26 228.6 -45.82 247.6 -63.42 312.61C-63.5593 313.14 -63.5145 313.702 -63.2929 314.203C-63.0712 314.705 -62.6859 315.116 -62.2 315.37C-2.47001 346.85 24.76 346.32 61.34 317.67C32.69 354.24 32.15 381.49 63.64 441.22L63.63 441.2C63.8824 441.687 64.2936 442.074 64.7954 442.296C65.2973 442.517 65.8598 442.561 66.39 442.42C131.42 424.82 150.4 406.42 156 357.65C161.6 406.43 180.58 424.82 245.6 442.42C246.13 442.563 246.693 442.52 247.196 442.298C247.698 442.076 248.109 441.689 248.36 441.2C279.85 381.47 279.31 354.24 250.68 317.68C287.24 346.34 314.48 346.85 374.22 315.38H374.2C374.688 315.126 375.075 314.713 375.297 314.209C375.518 313.706 375.562 313.142 375.42 312.61C357.82 247.61 371.26 228.61 322.5 223.01C371.26 217.41 357.81 198.41 375.42 133.4Z' fill='white'/%3E%3C/svg%3E");
+          mask-size: 100% 100%;
+          mask-repeat: no-repeat;
+          mask-position: bottom center;
+          -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-55 3.5 425 439' fill='none' preserveAspectRatio='none'%3E%3Cpath d='M375.42 133.4C375.564 132.868 375.521 132.304 375.299 131.8C375.077 131.296 374.689 130.883 374.2 130.63C314.47 99.1601 287.22 99.69 250.66 128.33C279.31 91.77 279.85 64.52 248.36 4.79005L248.37 4.81005C248.12 4.32033 247.71 3.93161 247.207 3.70938C246.704 3.48716 246.14 3.44501 245.61 3.59005C180.58 21.19 161.6 39.58 156 88.36C150.4 39.58 131.42 21.19 66.4 3.59005C65.8684 3.44245 65.3021 3.48331 64.7973 3.70568C64.2924 3.92805 63.88 4.31824 63.63 4.81005C32.15 64.54 32.68 91.78 61.33 128.33C24.77 99.69 -2.50001 99.1601 -62.2 130.63C-62.6892 130.883 -63.0771 131.296 -63.2991 131.8C-63.5211 132.304 -63.5637 132.868 -63.42 133.4C-45.82 198.4 -63.26 217.4 -14.5 223C-63.26 228.6 -45.82 247.6 -63.42 312.61C-63.5593 313.14 -63.5145 313.702 -63.2929 314.203C-63.0712 314.705 -62.6859 315.116 -62.2 315.37C-2.47001 346.85 24.76 346.32 61.34 317.67C32.69 354.24 32.15 381.49 63.64 441.22L63.63 441.2C63.8824 441.687 64.2936 442.074 64.7954 442.296C65.2973 442.517 65.8598 442.561 66.39 442.42C131.42 424.82 150.4 406.42 156 357.65C161.6 406.43 180.58 424.82 245.6 442.42C246.13 442.563 246.693 442.52 247.196 442.298C247.698 442.076 248.109 441.689 248.36 441.2C279.85 381.47 279.31 354.24 250.68 317.68C287.24 346.34 314.48 346.85 374.22 315.38H374.2C374.688 315.126 375.075 314.713 375.297 314.209C375.518 313.706 375.562 313.142 375.42 312.61C357.82 247.61 371.26 228.61 322.5 223.01C371.26 217.41 357.81 198.41 375.42 133.4Z' fill='white'/%3E%3C/svg%3E");
+          -webkit-mask-size: 100% 100%;
+          -webkit-mask-repeat: no-repeat;
+          -webkit-mask-position: bottom center;
+        }
+
+        .service-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.6s ease;
+        }
+
+        .service-card:hover .service-image {
+          transform: scale(1.1);
+        }
+
+        .hover-btn {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%) scale(0);
+          width: 60px;
+          height: 60px;
+          background: rgba(255, 255, 255, 0.2);
+          backdrop-filter: blur(10px);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #fff;
+          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          z-index: 10;
+          border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .service-card:hover .hover-btn {
+          transform: translate(-50%, -50%) scale(1);
+        }
+
+        .dot-pattern {
+          width: 24px;
+          height: 24px;
+          margin: 0 auto 1.5rem;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 4px;
+          justify-content: center;
+          opacity: 0.5;
+        }
+        
+        .dot {
+          width: 4px;
+          height: 4px;
+          background: var(--primary);
+          border-radius: 50%;
+          transition: background 0.4s ease;
+        }
+        
+        .service-card:hover .dot {
+          background: #fff;
+        }
+
+        .view-all-btn {
+          display: inline-block;
+          background: var(--primary);
+          color: #fff;
+          padding: 1rem 2.5rem;
+          border-radius: 12px;
+          font-weight: 700;
+          text-decoration: none;
+          margin-top: 4rem;
+          transition: all 0.3s ease;
+        }
+
+        .view-all-btn:hover {
+          transform: translateY(-3px);
+          box-shadow: 0 10px 20px rgba(74, 26, 107, 0.2);
+          background: #3a1455;
+        }
+      </style>
+
+      <div
+        style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:2rem; max-width: 1400px; margin: 0 auto;"
+      >
+        {
+          displayServices.slice(0, 4).map((service: any, i: number) => (
+            <div class={`service-card reveal delay-${(i % 4) + 1}`}>
+              <div class="card-content">
+                <div class="dot-pattern">
+                  <div class="dot" />
+                  <div class="dot" />
+                  <div class="dot" />
+                </div>
+                <h3 style="color:#111">
+                  {service.title}
+                </h3>
+                <p>
+                  {service.description}
+                </p>
+              </div>
+              
+              <div class="image-container">
+                <div class="leaf-mask">
+                  <img 
+                    src={`/images/landscaping-${(i % 6) + 1}.png`} 
+                    alt={service.title} 
+                    class="service-image"
+                  />
+                </div>
+                <div class="hover-btn">
+                  <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+
+      <div style="text-align:center">
+        <a href="/services" class="view-all-btn">
+          View All Services
+        </a>
       </div>
     </div>
   </section>
 
+  <!-- Features/Why Us -->
+  <section
+    class="reveal"
+    style={`padding:8rem 1.5rem; background:${primary}05; border-radius: 60px; margin: 0 1.5rem;`}
+  >
+    <div class="container">
+      <div
+        style="display:grid; grid-template-columns:repeat(auto-fit, minmax(400px, 1fr)); gap:4rem; align-items:center"
+      >
+        <div>
+          <h2
+            style="font-size:3rem; font-weight:800; margin-bottom:1.5rem; line-height:1.1; letter-spacing: -1px;"
+          >
+            Why Homeowners Choose {client.name}
+          </h2>
+          <p
+            style="color:#4b5563; font-size:1.1rem; margin-bottom:3rem; line-height:1.7"
+          >
+            We combine artistic vision with technical expertise to create
+            landscapes that increase property value and enhance your quality of
+            life.
+          </p>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:2rem">
+            {
+              [
+                { title: "10+ Years", desc: "Industry experience" },
+                { title: "500+", desc: "Happy clients" },
+                { title: "100%", desc: "Satisfaction rate" },
+                { title: "Fast", desc: "Response time" },
+              ].map((stat) => (
+                <div>
+                  <div
+                    style={`font-size:2rem; font-weight:800; color:${primary}; margin-bottom:0.25rem`}
+                  >
+                    {stat.title}
+                  </div>
+                  <div style="color:#6b7280; font-weight:500; font-size:0.9rem">
+                    {stat.desc}
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+
+        <div style="display:grid; grid-template-columns: 1fr; gap:1.5rem">
+          {
+            [
+              {
+                title: "Expert Designers",
+                desc: "Our team of landscape architects ensures every detail is perfect.",
+              },
+              {
+                title: "Sustainable Practices",
+                desc: "We use eco-friendly materials and water-saving technologies.",
+              },
+              {
+                title: "Transparent Pricing",
+                desc: "Clear, itemized quotes with no hidden surprises.",
+              },
+            ].map((item) => (
+              <div style="padding:2rem; background:#fff; border-radius:20px; box-shadow: 0 10px 30px -15px rgba(0,0,0,0.05); display:flex; gap:1.5rem">
+                <div
+                  style={`flex-shrink:0; width:48px; height:48px; border-radius:12px; background:${primary}15; display:flex; align-items:center; justify-content:center; color:${primary}`}
+                >
+                  <svg
+                    width="24"
+                    height="24"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <h4 style="font-weight:800; font-size:1.1rem; margin-bottom:0.5rem">
+                    {item.title}
+                  </h4>
+                  <p style="color:#6b7280; font-size:0.95rem; line-height:1.6">
+                    {item.desc}
+                  </p>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  {
+    testimonials.length > 0 && (
+      <section class="reveal" style="padding:8rem 1.5rem">
+        <div class="container">
+          <h2 style="font-size:3rem; font-weight:800; text-align:center; margin-bottom:5rem; letter-spacing: -1px;">
+            What Our Clients Say
+          </h2>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:2rem">
+            {testimonials.map((t: any) => (
+              <div
+                class="reveal"
+                style="padding:3rem; background:#fff; border-radius:32px; border:1px solid #f3f4f6; position:relative"
+              >
+                <div
+                  style={`position:absolute; top:3rem; right:3rem; font-size:4rem; line-height:1; color:${primary}15; font-family:serif`}
+                >
+                  “
+                </div>
+                <div style="color:#facc15; margin-bottom:1.5rem; display:flex; gap:0.25rem">
+                  {[1, 2, 3, 4, 5].map(() => (
+                    <svg
+                      width="20"
+                      height="20"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  ))}
+                </div>
+                <p style="color:#374151; font-size:1.1rem; font-weight:500; line-height:1.8; margin-bottom:2rem">
+                  "{t.text || t.content}"
+                </p>
+                <div style="display:flex; align-items:center; gap:1rem">
+                  <div
+                    style={`width:48px; height:48px; border-radius:50%; background:${primary}20; display:flex; align-items:center; justify-content:center; font-weight:800; color:${primary}`}
+                  >
+                    {t.name?.charAt(0)}
+                  </div>
+                  <div>
+                    <p style="font-weight:800; color:#111">
+                      {t.name || t.author}
+                    </p>
+                    {t.location && (
+                      <p style="font-size:0.85rem; color:#6b7280">
+                        {t.location}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- CTA Section -->
+  <section class="reveal" style="padding:4rem 1.5rem">
+    <div
+      class="container"
+      style={`background:${primary}; border-radius:40px; padding:6rem 2rem; color:#fff; text-align:center; position:relative; overflow:hidden`}
+    >
+      <div style="position:relative; z-index:1">
+        <h2
+          style="font-size:clamp(2rem, 5vw, 3.5rem); font-weight:800; margin-bottom:1.5rem; line-height:1; letter-spacing: -1px;"
+        >
+          Ready to Elevate Your Landscape?
+        </h2>
+        <p
+          style="opacity:0.9; margin: 0 auto 3rem; font-size:1.2rem; max-width:600px"
+        >
+          Join hundreds of satisfied homeowners in {client.city}. Schedule your
+          free consultation today.
+        </p>
+        <div
+          style="display:flex; gap:1.5rem; justify-content:center; flex-wrap:wrap"
+        >
+          <a
+            href="/contact"
+            class="btn"
+            style="background:#fff; color:var(--primary); padding: 1rem 3rem; font-size:1.1rem"
+            >Get Your Free Quote</a
+          >
+          <a
+            href={`tel:${client.phone}`}
+            class="btn"
+            style="background:rgba(255,255,255,0.1); color:#fff; border:1px solid rgba(255,255,255,0.3); padding: 1rem 3rem; font-size:1.1rem"
+            >{client.phone}</a
+          >
+        </div>
+      </div>
+      <!-- Background pattern -->
+      <div
+        style="position:absolute; top:0; right:0; width:100%; height:100%; opacity:0.1; background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 30px 30px;"
+      >
+      </div>
+    </div>
+  </section>
 </Layout>
