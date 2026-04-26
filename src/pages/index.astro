@@ -102,7 +102,7 @@ const primary = client.primaryColor || "#4a1a6b";
             </span>
           </h1>
 
-          <div style="display: flex; gap: 1.5rem;">
+          <div class="cta-container" style="display: flex; gap: 1.5rem;">
             <a
               href="/gallery"
               class="reveal delay-3"
@@ -143,7 +143,7 @@ const primary = client.primaryColor || "#4a1a6b";
 
         <!-- Rating Badge -->
         <div
-          class="reveal-right delay-4 animate-float"
+          class="reveal-right delay-4 animate-float rating-badge"
           style={`
           position: absolute;
           bottom: 50px;
@@ -198,14 +198,58 @@ const primary = client.primaryColor || "#4a1a6b";
     </div>
   </section>
 
+  <style define:vars={{ primary }}>
+    @media (max-width: 768px) {
+      #hero-card {
+        height: auto !important;
+        min-height: 600px;
+        padding: 4rem 1.5rem !important;
+        border-radius: 24px !important;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+      }
+      #hero-card h1 {
+        font-size: 3rem !important;
+        margin-bottom: 2rem !important;
+      }
+      #hero-card .cta-container {
+        flex-direction: column;
+        width: 100%;
+        gap: 1rem !important;
+      }
+      #hero-card .cta-container a {
+        width: 100%;
+        padding: 1rem 2rem !important;
+        text-align: center;
+      }
+      #hero-card .rating-badge {
+        position: relative !important;
+        bottom: auto !important;
+        right: auto !important;
+        margin-top: 3rem;
+        align-self: center;
+      }
+    }
+  </style>
+
   <script>
     const heroBg = document.getElementById("hero-bg");
-    window.addEventListener("scroll", () => {
-      if (!heroBg) return;
+    let ticking = false;
+
+    function updateZoom() {
       const scrollPos = window.scrollY;
-      const zoomFactor = 1 + scrollPos / 2000;
-      if (scrollPos < 1000) {
+      if (scrollPos < 1000 && heroBg) {
+        const zoomFactor = 1 + scrollPos / 2000;
         heroBg.style.transform = `scale(${zoomFactor})`;
+      }
+      ticking = false;
+    }
+
+    window.addEventListener("scroll", () => {
+      if (!ticking) {
+        window.requestAnimationFrame(updateZoom);
+        ticking = true;
       }
     });
   </script>
@@ -213,9 +257,17 @@ const primary = client.primaryColor || "#4a1a6b";
   <!-- Trust Bar (Reference Style) -->
   <section style="padding: 3rem 0; background: #fff;">
     <div
-      class="container"
+      class="container trust-bar-container"
       style="display: flex; justify-content: center; gap: 4rem; flex-wrap: wrap;"
     >
+      <style>
+        @media (max-width: 768px) {
+          .trust-bar-container {
+            gap: 1.5rem !important;
+            justify-content: flex-start !important;
+          }
+        }
+      </style>
       {
         [
           {
@@ -275,7 +327,10 @@ const primary = client.primaryColor || "#4a1a6b";
           border-radius: 160px 160px 40px 40px;
           background: #fdfbff;
           border: 1px solid #f0e6f7;
-          transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+          transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), 
+                      background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                      box-shadow 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                      border-color 0.3s ease;
           cursor: pointer;
           position: relative;
           overflow: hidden;
@@ -286,12 +341,14 @@ const primary = client.primaryColor || "#4a1a6b";
           text-align: center;
           will-change: transform, background-color, box-shadow;
           transform: translateZ(0);
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
         }
 
         .service-card:hover {
           background: var(--primary) !important;
           transform: translateY(-15px);
-          border-color: transparent;
+          border-color: var(--primary);
           box-shadow: 0 40px 80px -20px rgba(74, 26, 107, 0.45);
         }
 
@@ -334,6 +391,9 @@ const primary = client.primaryColor || "#4a1a6b";
           overflow: hidden;
           background: transparent;
           z-index: 1;
+          transform: translateZ(0);
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
         }
 
         .leaf-mask {
@@ -479,7 +539,7 @@ const primary = client.primaryColor || "#4a1a6b";
   >
     <div class="container">
       <div
-        style="display:grid; grid-template-columns:repeat(auto-fit, minmax(400px, 1fr)); gap:4rem; align-items:center"
+        style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:4rem; align-items:center"
       >
         <div>
           <h2

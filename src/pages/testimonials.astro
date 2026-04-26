@@ -12,13 +12,20 @@ const primary = client.primaryColor || '#2d5a3d'
 ---
 <Layout title="Testimonials">
   <!-- Hero Section -->
-  <section style={`padding: 8rem 1.5rem 4rem; background: linear-gradient(135deg, ${primary}15 0%, ${primary}05 100%); text-align:center; position:relative; overflow:hidden;`}>
-    <div style={`position:absolute; top:-10%; left:-10%; width:40%; height:80%; background: radial-gradient(circle, ${primary}10 0%, transparent 70%); filter:blur(60px); pointer-events:none`}></div>
+  <section style={`
+    padding: 12rem 1.5rem 10rem;
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('/images/landscaping-3.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    text-align: center;
+    color: #fff;
+  `}>
     <div style="max-width:1200px; margin:0 auto; position:relative; z-index:1">
       <div class="reveal">
-        <span style={`color:${primary}; font-weight:800; font-size:0.9rem; text-transform:uppercase; letter-spacing: 0.2em; display:block; margin-bottom:1rem`}>Client Stories</span>
-        <h1 style="font-size:clamp(2.5rem, 6vw, 4rem); font-weight:900; margin-bottom:1.5rem; letter-spacing: -2px; line-height:1.1">Customer Feedback</h1>
-        <p style="color:#6b7280; font-size:1.25rem; max-width:700px; margin:0 auto; line-height:1.6">Read about the experiences of homeowners who trusted us with their outdoor spaces.</p>
+        <span style={`color:#fff; background: ${primary}; padding: 0.5rem 1.25rem; border-radius: 100px; font-weight:800; font-size:0.85rem; text-transform:uppercase; letter-spacing: 0.1em; display:inline-block; margin-bottom:2rem`}>Client Stories</span>
+        <h1 style="font-size:clamp(3.5rem, 8vw, 5.5rem); font-weight:900; margin-bottom:1.5rem; letter-spacing: -2px; line-height:1; color: #fff;">Customer Feedback</h1>
+        <p style="opacity: 0.9; font-size:1.3rem; max-width:800px; margin:0 auto; line-height:1.6; font-weight: 500;">Read about the experiences of homeowners who trusted us with their outdoor spaces.</p>
       </div>
     </div>
   </section>

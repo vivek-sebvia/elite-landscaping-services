@@ -7,10 +7,18 @@ const primary = client.primaryColor || '#2d5a3d'
 <Layout title="Contact Us" description={`Contact ${client.name} for a free estimate. Serving ${client.city}, ${client.state}.`}>
 
   <!-- Hero Section -->
-  <section class="reveal active" style={`padding:8rem 1.5rem; background: ${primary}05; text-align:center`}>
+  <section class="reveal active" style={`
+    padding: 12rem 1.5rem 10rem;
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('/images/landscaping-6.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    text-align: center;
+    color: #fff;
+  `}>
     <div class="container">
-      <h1 style="font-size:clamp(2.5rem, 5vw, 4rem); font-weight:800; margin-bottom:1.5rem; letter-spacing: -1.5px;">Contact Us</h1>
-      <p style="color:#6b7280; max-width:600px; margin:0 auto; font-size:1.2rem; line-height: 1.6">
+      <h1 style="font-size:clamp(3.5rem, 8vw, 5.5rem); font-weight:900; margin-bottom:1.5rem; letter-spacing: -2px; line-height: 1;">Contact Us</h1>
+      <p style="opacity: 0.9; max-width:700px; margin:0 auto; font-size:1.3rem; line-height: 1.6; font-weight: 500;">
         Ready to start your project? Get in touch with us today for a free, no-obligation estimate.
       </p>
     </div>

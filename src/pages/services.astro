@@ -1,62 +1,308 @@
 ---
-import Layout from '../layouts/Layout.astro'
-import { client } from '../client.config.js'
+import Layout from "../layouts/Layout.astro";
+import { client } from "../client.config.js";
 
-let services = []
+let services = [];
 try {
-  const res = await fetch(`${client.cmsUrl}/api/services?where[tenant.slug][equals]=${client.tenantSlug}&limit=50`)
-  services = (await res.json()).docs || []
+  const res = await fetch(
+    `${client.cmsUrl}/api/services?where[tenant.slug][equals]=${client.tenantSlug}&limit=50`,
+  );
+  services = (await res.json()).docs || [];
 } catch {}
 
 const displayServices = services.length
   ? services
-  : client.services.map((s: string) => ({ title: s, description: `Expert ${s.toLowerCase()} services by licensed professionals in ${client.city}, ${client.state}.` }))
+  : client.services.map((s: string) => ({
+      title: s,
+      description: `Professional ${s.toLowerCase()} services in ${client.city}.`,
+    }));
 
-const primary = client.primaryColor || '#4a1a6b'
+const primary = client.primaryColor || "#4a1a6b";
 ---
 
-<Layout title="Services" description={`Professional ${client.industry} services in ${client.city}, ${client.state}.`}>
+<Layout
+  title="Services"
+  description={`Professional ${client.industry} services in ${client.city}, ${client.state}.`}
+>
   <!-- Hero Section -->
-  <section class="reveal active" style={`padding:8rem 1.5rem; background: ${primary}05; text-align:center`}>
-    <div class="container">
-      <h1 style="font-size:clamp(2.5rem, 5vw, 4rem); font-weight:800; margin-bottom:1.5rem; letter-spacing: -1.5px;">Our Specialized Services</h1>
-      <p style="color:#6b7280; max-width:600px; margin:0 auto; font-size:1.2rem; line-height: 1.6">
-        Providing top-tier {client.industry} solutions with a focus on quality, reliability, and customer satisfaction.
+  <section
+    class="reveal active"
+    style={`
+      padding: 12rem 1.5rem 10rem;
+      background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('/images/landscaping-2.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      text-align: center;
+      color: #fff;
+    `}
+  >
+    <div class="container" style="position: relative; z-index: 1;">
+      <span
+        style={`color:#fff; background: ${primary}; padding: 0.5rem 1.25rem; border-radius: 100px; font-weight:800; font-size:0.85rem; text-transform:uppercase; letter-spacing: 0.1em; display:inline-block; margin-bottom:2rem`}
+        >Expertise & Care</span
+      >
+      <h1
+        style="font-size:clamp(3.5rem, 8vw, 5.5rem); font-weight:900; margin-bottom:2rem; letter-spacing: -2px; line-height:1; color: #fff;"
+      >
+        Transforming Spaces <br /><span style={`opacity: 0.8`}
+          >With Excellence</span
+        >
+      </h1>
+      <p
+        style="opacity: 0.9; max-width:800px; margin:0 auto; font-size:1.3rem; line-height: 1.7; font-weight: 500;"
+      >
+        We offer a comprehensive range of landscaping and outdoor solutions
+        tailored to your vision and the unique California climate.
       </p>
     </div>
   </section>
 
-  <!-- Services Grid -->
-  <section class="reveal" style="padding:8rem 1.5rem">
+  <!-- Services Grid Section -->
+  <section style="padding: 6rem 1.5rem 10rem; background: #fff;">
     <div class="container">
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(350px, 1fr)); gap:2.5rem">
-        {displayServices.map((service: any) => (
-          <div class="reveal" style="display:flex; flex-direction:column; padding:3rem; border-radius:24px; border:1px solid #f3f4f6; background:#fff; transition: all 0.3s ease; box-shadow: 0 4px 20px -10px rgba(0,0,0,0.05);" onmouseover="this.style.borderColor=primary; this.style.transform='translateY(-5px)'" onmouseout="this.style.borderColor='#f3f4f6'; this.style.transform='translateY(0)'">
-            <div style={`width:56px; height:56px; border-radius:14px; background:${primary}10; display:flex; align-items:center; justify-content:center; margin-bottom:2rem; color:${primary}`}>
-              <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+      <style define:vars={{ primary }}>
+        .service-card {
+          border-radius: 160px 160px 40px 40px;
+          background: #fdfbff;
+          border: 1px solid #f0e6f7;
+          transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), 
+                      background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                      box-shadow 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                      border-color 0.3s ease;
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
+          display: flex;
+          flex-direction: column;
+          height: 100%;
+          padding: 0;
+          text-align: center;
+          will-change: transform, background-color, box-shadow;
+          transform: translateZ(0);
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+        }
+
+        .service-card:hover {
+          background: var(--primary) !important;
+          transform: translateY(-15px);
+          border-color: var(--primary);
+          box-shadow: 0 40px 80px -20px rgba(74, 26, 107, 0.45);
+        }
+
+        .card-content {
+          padding: 4rem 2rem 1rem;
+          flex: 1;
+          background: transparent;
+          position: relative;
+          z-index: 2;
+        }
+
+        .service-card h3 {
+          font-size: 1.8rem;
+          font-weight: 800;
+          margin-bottom: 1rem;
+          color: #111;
+          transition: color 0.8s ease;
+        }
+
+        .service-card:hover h3 {
+          color: #fff !important;
+        }
+
+        .service-card p {
+          color: #6b7280;
+          font-size: 1.05rem;
+          line-height: 1.6;
+          transition: color 0.8s ease;
+        }
+
+        .service-card:hover p {
+          color: rgba(255, 255, 255, 0.95) !important;
+        }
+
+        .image-container {
+          position: relative;
+          width: 100%;
+          height: 400px;
+          margin-top: -15px;
+          overflow: hidden;
+          background: transparent;
+          z-index: 1;
+          transform: translateZ(0);
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+        }
+
+        .leaf-mask {
+          width: 100%;
+          height: 100%;
+          mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-55 3.5 425 439' fill='none' preserveAspectRatio='none'%3E%3Cpath d='M375.42 133.4C375.564 132.868 375.521 132.304 375.299 131.8C375.077 131.296 374.689 130.883 374.2 130.63C314.47 99.1601 287.22 99.69 250.66 128.33C279.31 91.77 279.85 64.52 248.36 4.79005L248.37 4.81005C248.12 4.32033 247.71 3.93161 247.207 3.70938C246.704 3.48716 246.14 3.44501 245.61 3.59005C180.58 21.19 161.6 39.58 156 88.36C150.4 39.58 131.42 21.19 66.4 3.59005C65.8684 3.44245 65.3021 3.48331 64.7973 3.70568C64.2924 3.92805 63.88 4.31824 63.63 4.81005C32.15 64.54 32.68 91.78 61.33 128.33C24.77 99.69 -2.50001 99.1601 -62.2 130.63C-62.6892 130.883 -63.0771 131.296 -63.2991 131.8C-63.5211 132.304 -63.5637 132.868 -63.42 133.4C-45.82 198.4 -63.26 217.4 -14.5 223C-63.26 228.6 -45.82 247.6 -63.42 312.61C-63.5593 313.14 -63.5145 313.702 -63.2929 314.203C-63.0712 314.705 -62.6859 315.116 -62.2 315.37C-2.47001 346.85 24.76 346.32 61.34 317.67C32.69 354.24 32.15 381.49 63.64 441.22L63.63 441.2C63.8824 441.687 64.2936 442.074 64.7954 442.296C65.2973 442.517 65.8598 442.561 66.39 442.42C131.42 424.82 150.4 406.42 156 357.65C161.6 406.43 180.58 424.82 245.6 442.42C246.13 442.563 246.693 442.52 247.196 442.298C247.698 442.076 248.109 441.689 248.36 441.2C279.85 381.47 279.31 354.24 250.68 317.68C287.24 346.34 314.48 346.85 374.22 315.38H374.2C374.688 315.126 375.075 314.713 375.297 314.209C375.518 313.706 375.562 313.142 375.42 312.61C357.82 247.61 371.26 228.61 322.5 223.01C371.26 217.41 357.81 198.41 375.42 133.4Z' fill='white'/%3E%3C/svg%3E");
+          mask-size: 100% 100%;
+          mask-repeat: no-repeat;
+          mask-position: bottom center;
+          -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-55 3.5 425 439' fill='none' preserveAspectRatio='none'%3E%3Cpath d='M375.42 133.4C375.564 132.868 375.521 132.304 375.299 131.8C375.077 131.296 374.689 130.883 374.2 130.63C314.47 99.1601 287.22 99.69 250.66 128.33C279.31 91.77 279.85 64.52 248.36 4.79005L248.37 4.81005C248.12 4.32033 247.71 3.93161 247.207 3.70938C246.704 3.48716 246.14 3.44501 245.61 3.59005C180.58 21.19 161.6 39.58 156 88.36C150.4 39.58 131.42 21.19 66.4 3.59005C65.8684 3.44245 65.3021 3.48331 64.7973 3.70568C64.2924 3.92805 63.88 4.31824 63.63 4.81005C32.15 64.54 32.68 91.78 61.33 128.33C24.77 99.69 -2.50001 99.1601 -62.2 130.63C-62.6892 130.883 -63.0771 131.296 -63.2991 131.8C-63.5211 132.304 -63.5637 132.868 -63.42 133.4C-45.82 198.4 -63.26 217.4 -14.5 223C-63.26 228.6 -45.82 247.6 -63.42 312.61C-63.5593 313.14 -63.5145 313.702 -63.2929 314.203C-63.0712 314.705 -62.6859 315.116 -62.2 315.37C-2.47001 346.85 24.76 346.32 61.34 317.67C32.69 354.24 32.15 381.49 63.64 441.22L63.63 441.2C63.8824 441.687 64.2936 442.074 64.7954 442.296C65.2973 442.517 65.8598 442.561 66.39 442.42C131.42 424.82 150.4 406.42 156 357.65C161.6 406.43 180.58 424.82 245.6 442.42C246.13 442.563 246.693 442.52 247.196 442.298C247.698 442.076 248.109 441.689 248.36 441.2C279.85 381.47 279.31 354.24 250.68 317.68C287.24 346.34 314.48 346.85 374.22 315.38H374.2C374.688 315.126 375.075 314.713 375.297 314.209C375.518 313.706 375.562 313.142 375.42 312.61C357.82 247.61 371.26 228.61 322.5 223.01C371.26 217.41 357.81 198.41 375.42 133.4Z' fill='white'/%3E%3C/svg%3E");
+          -webkit-mask-size: 100% 100%;
+          -webkit-mask-repeat: no-repeat;
+          -webkit-mask-position: bottom center;
+        }
+
+        .service-image {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.6s ease;
+        }
+
+        .service-card:hover .service-image {
+          transform: scale(1.1);
+        }
+
+        .hover-btn {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%) scale(0);
+          width: 60px;
+          height: 60px;
+          background: rgba(255, 255, 255, 0.2);
+          backdrop-filter: blur(10px);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #fff;
+          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+          z-index: 10;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .service-card:hover .hover-btn {
+          transform: translate(-50%, -50%) scale(1);
+        }
+
+        .dot-pattern {
+          width: 24px;
+          height: 24px;
+          margin: 0 auto 1.5rem;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 4px;
+          justify-content: center;
+          opacity: 0.5;
+        }
+
+        .dot {
+          width: 4px;
+          height: 4px;
+          background: var(--primary);
+          border-radius: 50%;
+          transition: background 0.4s ease;
+        }
+
+        .service-card:hover .dot {
+          background: #fff;
+        }
+
+        @media (max-width: 768px) {
+          .service-card {
+            border-radius: 80px 80px 20px 20px;
+          }
+          .image-container {
+            height: 300px;
+          }
+        }
+      </style>
+
+      <div
+        style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:3rem; max-width: 1400px; margin: 0 auto;"
+      >
+        {
+          displayServices.map((service: any, i: number) => (
+            <div class={`service-card reveal delay-${(i % 4) + 1}`}>
+              <div class="card-content">
+                <div class="dot-pattern">
+                  <div class="dot" />
+                  <div class="dot" />
+                  <div class="dot" />
+                </div>
+                <h3>{service.title}</h3>
+                <p>{service.description}</p>
+              </div>
+
+              <div class="image-container">
+                <div class="leaf-mask">
+                  <img
+                    src={`/images/landscaping-${(i % 6) + 1}.png`}
+                    alt={service.title}
+                    class="service-image"
+                  />
+                </div>
+                <div class="hover-btn">
+                  <svg
+                    width="24"
+                    height="24"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2.5"
+                      d="M14 5l7 7m0 0l-7 7m7-7H3"
+                    />
+                  </svg>
+                </div>
+              </div>
             </div>
-            <h2 style="font-size:1.5rem; font-weight:800; margin-bottom:1rem; color:#111">{service.title}</h2>
-            <p style="color:#6b7280; font-size:1.05rem; line-height:1.7; margin-bottom:2rem">{service.description}</p>
-            <a href="/contact" style={`margin-top:auto; color:${primary}; font-weight:700; display:flex; align-items:center; gap:0.5rem`}>
-              Request Estimate
-              <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
-            </a>
-          </div>
-        ))}
+          ))
+        }
       </div>
     </div>
   </section>
 
   <!-- CTA Section -->
   <section class="reveal" style="padding:4rem 1.5rem">
-    <div class="container" style={`background:${primary}; border-radius:40px; padding:6rem 2rem; color:#fff; text-align:center`}>
-      <h2 style="font-size:2.5rem; font-weight:800; margin-bottom:1.5rem; letter-spacing: -1px;">Don't See What You're Looking For?</h2>
-      <p style="opacity:0.9; margin-bottom:2.5rem; font-size:1.1rem; max-width:600px; margin-left:auto; margin-right:auto">We offer a wide range of custom {client.industry} solutions. Contact us today to discuss your specific needs.</p>
-      <div style="display:flex; gap:1.5rem; justify-content:center; flex-wrap:wrap">
-        <a href="/contact" class="btn" style="background:#fff; color:var(--primary); padding: 1rem 3rem">Contact Us Now</a>
-        <a href={`tel:${client.phone}`} class="btn" style="background:rgba(255,255,255,0.1); color:#fff; border:1px solid rgba(255,255,255,0.3); padding: 1rem 3rem">{client.phone}</a>
+    <div
+      class="container"
+      style={`background:${primary}; border-radius:40px; padding:6rem 2rem; color:#fff; text-align:center; position:relative; overflow:hidden`}
+    >
+      <div style="position:relative; z-index:1">
+        <h2
+          style="font-size:clamp(2.5rem, 5vw, 3.5rem); font-weight:800; margin-bottom:1.5rem; line-height:1; letter-spacing: -1px;"
+        >
+          Ready to Start Your Project?
+        </h2>
+        <p
+          style="opacity:0.9; margin: 0 auto 3rem; font-size:1.2rem; max-width:600px"
+        >
+          Contact us today for a free consultation and let us help you bring
+          your dream landscape to life.
+        </p>
+        <div
+          style="display:flex; gap:1.5rem; justify-content:center; flex-wrap:wrap"
+        >
+          <a
+            href="/contact"
+            class="btn"
+            style="background:#fff; color:var(--primary); padding: 1rem 3rem; font-size:1.1rem"
+            >Get Your Free Quote</a
+          >
+          <a
+            href={`tel:${client.phone}`}
+            class="btn"
+            style="background:rgba(255,255,255,0.1); color:#fff; border:1px solid rgba(255,255,255,0.3); padding: 1rem 3rem; font-size:1.1rem"
+            >{client.phone}</a
+          >
+        </div>
+      </div>
+      <!-- Background pattern -->
+      <div
+        style="position:absolute; top:0; right:0; width:100%; height:100%; opacity:0.1; background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 30px 30px;"
+      >
       </div>
     </div>
   </section>
-
-</Layout>
+</Layout>

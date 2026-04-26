@@ -1,54 +1,320 @@
 ---
-import Layout from '../../layouts/Layout.astro'
-import { client } from '../../client.config.js'
+import Layout from "../../layouts/Layout.astro";
+import { client } from "../../client.config.js";
 
 export async function getStaticPaths() {
+  let posts = [];
   try {
     const res = await fetch(
-      `${client.cmsUrl}/api/blog?where[tenant.slug][equals]=${client.tenantSlug}&limit=100`
-    )
-    const data = await res.json()
-    return (data.docs || []).map((post: any) => ({
-      params: { slug: post.slug },
-      props: { post },
-    }))
-  } catch {
-    return []
-  }
+      `${client.cmsUrl}/api/blog?where[tenant.slug][equals]=${client.tenantSlug}&limit=100`,
+    );
+    if (res.ok) {
+      const data = await res.json();
+      posts = data.docs || [];
+    }
+  } catch {}
+
+  const finalPosts = posts.length > 0 ? posts : (client.blogPosts || []);
+
+  return finalPosts.map((post: any) => ({
+    params: { slug: post.slug },
+    props: { post, allPosts: finalPosts },
+  }));
 }
 
-const { post } = Astro.props
-const primary = client.primaryColor || '#2d5a3d'
+const { post, allPosts } = Astro.props as { post: any; allPosts: any[] };
+const primary = client.primaryColor || "#4a1a6b";
+
+// Fallback content if post has no content
+const displayContent = post.content || `
+  <p>Proper landscape design is more than just planting flowers—it's about creating a sustainable ecosystem that enhances your home's value and your quality of life. At ${client.name}, we believe every backyard has the potential to become a private sanctuary.</p>
+  
+  <h2>Why Professional Design Matters</h2>
+  <p>Our expert team considers factors like soil quality, sun exposure, and water drainage to ensure your garden thrives for years to come. We use premium materials and high-quality plants specifically selected for the ${client.city} climate.</p>
+  
+  <ul>
+    <li>Custom-tailored outdoor living spaces</li>
+    <li>Water-efficient irrigation systems</li>
+    <li>Native plant selection for biodiversity</li>
+    <li>High-quality hardscaping and lighting</li>
+  </ul>
+  
+  <blockquote>
+    <p>A beautiful landscape is an investment that grows over time, bringing joy and tranquility to your daily life.</p>
+  </blockquote>
+  
+  <p>Ready to start your journey? Our consultants are here to guide you through every step of the process, from initial sketch to the final leaf in place.</p>
+`;
+
+// Get related posts (excluding current post)
+const relatedPosts = allPosts
+  .filter((p: any) => p.slug !== post.slug)
+  .slice(0, 3);
 ---
 
-<Layout title={post?.title || 'Blog Post'}>
-
-  <section style={`padding:4rem 1.5rem;background:${primary}12`}>
-    <div style="max-width:800px;margin:0 auto">
-      <a href="/blog" style={`color:${primary};font-size:0.9rem;font-weight:500`}>← Back to Blog</a>
-      <h1 style="font-size:2.25rem;font-weight:800;margin:1rem 0 0.5rem;line-height:1.25">{post?.title || 'Blog Post'}</h1>
-      {post?.createdAt && (
-        <p style="color:#6b7280;font-size:0.875rem">
-          {new Date(post.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-        </p>
-      )}
+<Layout title={post?.title || "Blog Post"}>
+  <!-- Blog Header Section -->
+  <section style="padding: 5rem 1.5rem 3rem; text-align: center; background: #fff; position: relative; z-index: 10;">
+    <div class="container" style="max-width: 900px;">
+      <div
+        style={`display: inline-block; background: ${primary}10; color: ${primary}; padding: 0.5rem 1.25rem; border-radius: 100px; font-size: 0.85rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2rem;`}
+      >
+        Tips
+      </div>
+      <h1
+        style="font-size: clamp(2.2rem, 5vw, 3.5rem); font-weight: 900; line-height: 1.1; margin-bottom: 1.5rem; letter-spacing: -2px; color: #111;"
+      >
+        {post?.title}
+      </h1>
+      <p style="color: #6b7280; font-size: 1.1rem; font-weight: 500;">
+        {
+          post?.createdAt &&
+            new Date(post.createdAt).toLocaleDateString("en-US", {
+              month: "long",
+              day: "numeric",
+              year: "numeric",
+            })
+        }
+      </p>
     </div>
   </section>
 
-  <section style="padding:3rem 1.5rem">
-    <div style="max-width:800px;margin:0 auto">
-      {post?.image?.url && (
-        <div style="border-radius:12px;overflow:hidden;margin-bottom:2rem;aspect-ratio:16/9">
-          <img src={post.image.url} alt={post.title} style="width:100%;height:100%;object-fit:cover" />
+  <!-- Featured Image -->
+  <section style="padding: 0 1.5rem; margin-bottom: 5rem;">
+    <div
+      class="container"
+      style="max-width: 1100px; border-radius: 40px; overflow: hidden; box-shadow: 0 40px 100px -20px rgba(0,0,0,0.15);"
+    >
+      {
+        post?.image?.url ? (
+          <img
+            src={post.image.url}
+            alt={post.title}
+            style="width: 100%; height: auto; display: block; aspect-ratio: 16/9; object-fit: cover;"
+          />
+        ) : (
+          <div style="aspect-ratio: 16/9; background: #f3f4f6;" />
+        )
+      }
+    </div>
+  </section>
+
+  <!-- Article Content -->
+  <article style="padding: 0 1.5rem 8rem;">
+    <div class="container" style="max-width: 850px;">
+      <div class="blog-content" set:html={displayContent} />
+
+      <!-- Feedback Section -->
+      <div
+        style="margin-top: 6rem; padding: 4rem 2rem; background: #f9fafb; border-radius: 32px; text-align: center; border: 1px solid #f3f4f6;"
+      >
+        <h3
+          style="font-size: 1.75rem; font-weight: 800; margin-bottom: 1.5rem; color: #111;"
+        >
+          What do you think?
+        </h3>
+        <p style="color: #6b7280; font-size: 1.1rem; margin-bottom: 2.5rem;">
+          Did you find this article helpful? We'd love to hear your thoughts!
+        </p>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+          <button class="feedback-btn" style={`border-color: ${primary}20; color: #111;`}>
+            <span>👍</span> Helpful
+          </button>
+          <button class="feedback-btn" style={`border-color: ${primary}20; color: #111;`}>
+            <span>❤️</span> Inspiring
+          </button>
+          <button class="feedback-btn" style={`border-color: ${primary}20; color: #111;`}>
+            <span>💬</span> Share Thoughts
+          </button>
         </div>
-      )}
-      <div style="font-size:1.05rem;line-height:1.8;color:#374151" set:html={post?.content || '<p>Content coming soon.</p>'} />
-      <div style={`margin-top:3rem;padding:1.5rem;border-radius:12px;background:${primary}12`}>
-        <h3 style="font-weight:700;margin-bottom:0.5rem">Ready to get started?</h3>
-        <p style="color:#4b5563;margin-bottom:1rem">Contact {client.name} for a free, no-obligation estimate.</p>
-        <a href="/contact" style={`background:${primary};color:#fff;padding:0.6rem 1.5rem;border-radius:8px;font-weight:600`}>Get Free Quote</a>
+      </div>
+    </div>
+  </article>
+
+  <!-- Call to Action Banner -->
+  <section style="padding: 0 1.5rem 8rem;">
+    <div
+      class="container"
+      style={`background: ${primary}; border-radius: 40px; padding: 5rem 3rem; color: #fff; text-align: center; position: relative; overflow: hidden;`}
+    >
+      <div style="position: relative; z-index: 1;">
+        <h2
+          style="font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; margin-bottom: 1.5rem; line-height: 1.1;"
+        >
+          Let {client.name.split(" ")[0]} Help You Transform Your Landscape
+        </h2>
+        <p style="opacity: 0.9; font-size: 1.2rem; max-width: 700px; margin: 0 auto 3rem;">
+          Our expert team is ready to bring your dream garden to life with sustainable practices and artistic design.
+        </p>
+        <a
+          href="/contact"
+          style={`background: #fff; color: ${primary}; padding: 1.25rem 3rem; border-radius: 18px; font-weight: 800; text-decoration: none; display: inline-block; font-size: 1.1rem; transition: all 0.3s ease;`}
+          class="cta-btn-hover"
+        >
+          Request Your Quote
+        </a>
+      </div>
+      <!-- Pattern overlay -->
+      <div
+        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.05; background-image: radial-gradient(#fff 2px, transparent 2px); background-size: 40px 40px;"
+      >
       </div>
     </div>
   </section>
 
+  <!-- Related Articles -->
+  {
+    relatedPosts.length > 0 && (
+      <section style="padding: 8rem 1.5rem; background: #fff; border-top: 1px solid #f3f4f6;">
+        <div class="container">
+          <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 4rem; flex-wrap: wrap; gap: 1.5rem;">
+            <div>
+              <span
+                style={`color: ${primary}; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; display: block; margin-bottom: 0.75rem;`}
+              >
+                Next Read
+              </span>
+              <h2 style="font-size: 2.5rem; font-weight: 900; letter-spacing: -1px; color: #111;">
+                More Related Articles
+              </h2>
+            </div>
+            <a
+              href="/blog"
+              style={`color: ${primary}; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 0.5rem;`}
+            >
+              View All Posts
+              <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </a>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2.5rem;">
+            {relatedPosts.map((rp: any, i: number) => (
+              <a
+                href={`/blog/${rp.slug}`}
+                class={`reveal delay-${i + 1} related-card`}
+                style="text-decoration: none; color: #111; display: block;"
+              >
+                <div style="border-radius: 24px; overflow: hidden; margin-bottom: 1.5rem; aspect-ratio: 16/10; background: #f3f4f6;">
+                  {rp.image?.url && (
+                    <img
+                      src={rp.image.url}
+                      alt={rp.title}
+                      style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;"
+                      class="related-img"
+                    />
+                  )}
+                </div>
+                <span
+                  style={`color: ${primary}; font-weight: 800; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em;`}
+                >
+                  Tips
+                </span>
+                <h3
+                  style="font-size: 1.4rem; font-weight: 800; margin-top: 0.75rem; line-height: 1.3; transition: color 0.3s ease;"
+                  class="related-title"
+                >
+                  {rp.title}
+                </h3>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <style define:vars={{ primary }}>
+    /* Typography & Content Styles */
+    .blog-content {
+      font-size: 1.2rem;
+      line-height: 1.8;
+      color: #374151;
+      font-weight: 400;
+    }
+    .blog-content :global(p) {
+      margin-bottom: 2rem;
+    }
+    .blog-content :global(h2) {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #111;
+      margin: 4rem 0 1.5rem;
+      line-height: 1.2;
+      letter-spacing: -0.5px;
+    }
+    .blog-content :global(h3) {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #111;
+      margin: 3rem 0 1.25rem;
+      line-height: 1.2;
+    }
+    .blog-content :global(ul), .blog-content :global(ol) {
+      margin-bottom: 2.5rem;
+      padding-left: 1.5rem;
+    }
+    .blog-content :global(li) {
+      margin-bottom: 1rem;
+      padding-left: 0.5rem;
+    }
+    .blog-content :global(blockquote) {
+      margin: 4rem 0;
+      padding: 3rem;
+      background: #fdfbff;
+      border-radius: 32px;
+      border: 1px solid #f0e6f7;
+      text-align: center;
+      position: relative;
+    }
+    .blog-content :global(blockquote p) {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0;
+      line-height: 1.5;
+    }
+    .blog-content :global(img) {
+      width: 100%;
+      height: auto;
+      border-radius: 24px;
+      margin: 3rem 0;
+    }
+
+    /* Interaction Styles */
+    .feedback-btn {
+      background: #fff;
+      border: 1px solid;
+      padding: 1rem 2rem;
+      border-radius: 16px;
+      font-weight: 700;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .feedback-btn:hover {
+      background: var(--primary);
+      color: #fff !important;
+      border-color: var(--primary);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+    }
+    
+    .cta-btn-hover:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+      filter: brightness(0.95);
+    }
+
+    .related-card:hover .related-img {
+      transform: scale(1.05);
+    }
+    .related-card:hover .related-title {
+      color: var(--primary);
+    }
+  </style>
 </Layout>

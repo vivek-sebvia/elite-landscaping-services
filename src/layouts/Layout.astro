@@ -38,6 +38,8 @@ const primary = client.primaryColor || "#4a1a6b";
       color: var(--text-main); 
       background: #fff; 
       line-height: 1.5;
+      overflow-x: hidden;
+      width: 100%;
     }
     a { text-decoration: none; color: inherit; transition: all 0.3s ease; }
     img { max-width: 100%; height: auto; display: block; }
@@ -338,6 +340,7 @@ const primary = client.primaryColor || "#4a1a6b";
               "About us",
               "Services",
               "Gallery",
+              "Reviews",
               "Blog",
               "Contact us",
             ].map((item) => {
@@ -346,9 +349,11 @@ const primary = client.primaryColor || "#4a1a6b";
                   ? "/"
                   : item === "About us"
                     ? "/about"
-                    : item === "Contact us"
-                      ? "/contact"
-                      : `/${item.toLowerCase().replace(" ", "-")}`;
+                    : item === "Reviews"
+                      ? "/testimonials"
+                      : item === "Contact us"
+                        ? "/contact"
+                        : `/${item.toLowerCase().replace(" ", "-")}`;
               const isActive = currentPath === path;
               return (
                 <a
